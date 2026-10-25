@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Facet · Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Outfit:wght@200;300;400&display=swap">
+<style>
+/* Layout: one centred glass card over the same drifting colour field as the timer,
+   with a floating glass timer chip behind it for depth. */
+:root {
+  --bg: #e6ecf2; --fg: #0e1621; --fg-2: #46566a; --fg-3: #7d8da0; --line: rgb(14 22 33 / 0.1);
+  --glass-rgb: 255 255 255; --edge-rgb: 255 255 255; --edge-alpha: 0.7; --shade-rgb: 24 36 60;
+  --hilite: rgb(255 255 255 / 0.75);
+  --acc-h: 168; --acc-s: 80%;
+  --field-a: hsl(var(--acc-h) var(--acc-s) 74%); --field-b: hsl(calc(var(--acc-h) + 55) var(--acc-s) 80%); --field-c: hsl(calc(var(--acc-h) - 150) var(--acc-s) 84%);
+  --accent: #14b896; --accent-ink: #ffffff; --accent-soft: rgb(20 184 150 / 0.16);
+  --font-ui: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-timer: "Outfit", "Segoe UI", system-ui, sans-serif;
+  --glass-alpha: 0.42; --blur: 22px; --radius: 28px;
+  --spec: 0.9; --rim: 0.7; --tint: 0.06;
+  --spring: cubic-bezier(0.34, 1.32, 0.5, 1); --spring-soft: cubic-bezier(0.32, 1.12, 0.5, 1); --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring: linear(0, 0.013 0.6%, 0.05 1.2%, 0.2 2.6%, 0.43 4.3%, 0.86 7.9%, 1.002 9.7%, 1.084 11.6%, 1.122 13.5%, 1.125 15.1%, 1.108 17%, 1.052 21.2%, 1.009 25.6%, 0.992 30.4%, 0.996 39.2%, 1.001 50%, 1);
+    --spring-soft: linear(0, 0.04 1.6%, 0.17 3.6%, 0.58 8.6%, 0.86 13.2%, 0.97 16.8%, 1.03 21.4%, 1.04 25.6%, 1.02 32%, 1 44%, 1);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #090d14; --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
+    --glass-rgb: 22 28 40; --edge-alpha: 0.13; --shade-rgb: 0 0 0; --hilite: rgb(255 255 255 / 0.16);
+    --field-a: hsl(var(--acc-h) var(--acc-s) 24%); --field-b: hsl(calc(var(--acc-h) + 55) var(--acc-s) 24%); --field-c: hsl(calc(var(--acc-h) - 150) var(--acc-s) 22%);
+    --accent-ink: #04130f; --spec: 0.42; --rim: 0.32; --tint: 0.03; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #090d14; --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
+  --glass-rgb: 22 28 40; --edge-alpha: 0.13; --shade-rgb: 0 0 0; --hilite: rgb(255 255 255 / 0.16);
+  --field-a: hsl(var(--acc-h) var(--acc-s) 24%); --field-b: hsl(calc(var(--acc-h) + 55) var(--acc-s) 24%); --field-c: hsl(calc(var(--acc-h) - 150) var(--acc-s) 22%);
+  --accent-ink: #04130f; --spec: 0.42; --rim: 0.32; --tint: 0.03; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; -webkit-font-smoothing: antialiased; overflow: hidden; }
+a, button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.field { position: fixed; inset: 0; overflow: hidden; background: var(--bg); }
+.blob { position: absolute; width: 62vmax; height: 62vmax; border-radius: 50%; filter: blur(70px); opacity: 0.85; }
+.b1 { background: radial-gradient(circle, var(--field-a), transparent 66%); left: -18vmax; top: -22vmax; animation: d1 38s ease-in-out infinite alternate; }
+.b2 { background: radial-gradient(circle, var(--field-b), transparent 66%); right: -20vmax; top: 6vmax; animation: d2 46s ease-in-out infinite alternate; }
+.b3 { background: radial-gradient(circle, var(--field-c), transparent 66%); left: 14vmax; bottom: -30vmax; animation: d3 52s ease-in-out infinite alternate; }
+@keyframes d1 { to { transform: translate(14vmax, 10vmax) scale(1.12); } }
+@keyframes d2 { to { transform: translate(-12vmax, 14vmax) scale(0.92); } }
+@keyframes d3 { to { transform: translate(10vmax, -12vmax) scale(1.08); } }
+/* ---------- glass ----------
+   Liquid-glass recipe: a light tint over a saturated blur, a hairline
+   edge, a bright specular rim on the lit side (::after, masked to the
+   border), a soft glow from inside, and a highlight that follows the
+   pointer (::before, --mx / --my set from script). */
+.glass {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / var(--tint)), rgb(255 255 255 / 0) 60%),
+    rgb(var(--glass-rgb) / var(--glass-alpha));
+  -webkit-backdrop-filter: blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
+  backdrop-filter: blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 0 0 0.5px rgb(var(--edge-rgb) / calc(var(--edge-alpha) * 0.9)),
+    inset 0 1px 1px rgb(255 255 255 / calc(var(--spec) * 0.55)),
+    inset 0 -1px 1px rgb(255 255 255 / calc(var(--spec) * 0.18)),
+    inset 0 -16px 28px -22px rgb(255 255 255 / calc(var(--spec) * 0.5)),
+    inset 0 14px 24px -20px rgb(255 255 255 / calc(var(--spec) * 0.35)),
+    0 1px 1px rgb(var(--shade-rgb) / 0.05),
+    0 10px 30px -10px rgb(var(--shade-rgb) / 0.28),
+    0 30px 60px -30px rgb(var(--shade-rgb) / 0.3);
+}
+.glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2;
+  padding: 1.2px;
+  background: linear-gradient(var(--rim-angle, 140deg),
+    rgb(255 255 255 / var(--rim)) 0%, rgb(255 255 255 / calc(var(--rim) * 0.25)) 22%,
+    rgb(255 255 255 / 0) 45%, rgb(255 255 255 / 0) 62%,
+    rgb(255 255 255 / calc(var(--rim) * 0.55)) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+  background: radial-gradient(260px circle at var(--mx, 18%) var(--my, -40px), rgb(255 255 255 / calc(var(--spec) * 0.32)), transparent 70%);
+  opacity: var(--glow, 0.6);
+  transition: opacity 0.5s var(--ease-out);
+}
+.glass:hover { --glow: 1; }
+body.no-sheen .glass::before { display: none; }
+body.no-sheen .glass::after { opacity: 0.4; }
+/* optional lensing: Chromium can run an SVG displacement filter as a backdrop */
+body.refract .glass {
+  -webkit-backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
+  backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
+}
+
+/* pressable glass: squish on press, spring back */
+.pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
+  transition: transform 0.55s var(--spring), background-color 0.25s var(--ease-out), color 0.25s var(--ease-out), box-shadow 0.3s var(--ease-out), filter 0.2s;
+}
+.pill:active, .iconbtn:active, .btn:active, .seg:active, .item:active, .swatch:active, .fontpick button:active, .checks button:active, .w-extra button:active { transform: scale(0.94); transition-duration: 0.12s; }
+.segctl button:active, .tabs button:active { transform: scale(0.92); transition-duration: 0.12s; }
+
+/* glass capsules that group controls, toolbar style */
+.capsule { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; min-width: 0; }
+.capsule .div { width: 1px; height: 20px; background: var(--line); flex: none; }
+.capsule > .pill, .capsule > .iconbtn { background: transparent; border: 0; box-shadow: none; height: 36px; }
+.capsule > .iconbtn { width: 38px; }
+.capsule > .pill:hover, .capsule > .iconbtn:hover { background: rgb(var(--glass-rgb) / 0.55); filter: none; }
+
+/* sliding glass thumb for segmented controls */
+.has-thumb { position: relative; isolation: isolate; }
+.has-thumb > .thumb {
+  position: absolute; z-index: -1; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: 999px; pointer-events: none;
+  background: rgb(var(--glass-rgb) / 0.95);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / calc(var(--spec) * 0.8)), inset 0 0 0 0.5px rgb(var(--edge-rgb) / var(--edge-alpha)), 0 2px 8px -2px rgb(var(--shade-rgb) / 0.25);
+  opacity: 0;
+}
+.has-thumb.thumb-on > .thumb { opacity: 1; }
+.has-thumb.thumb-live > .thumb { transition: transform 0.6s var(--spring), width 0.6s var(--spring), opacity 0.2s; }
+.has-thumb > button[aria-pressed="true"], .has-thumb > button[aria-selected="true"] { background: transparent !important; box-shadow: none !important; }
+.result-actions.has-thumb > .thumb { background: var(--accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), 0 4px 14px -4px var(--accent); }
+.result-actions.has-thumb > .seg[aria-pressed="true"] { color: var(--accent-ink); }
+
+/* motion */
+@keyframes popIn { from { opacity: 0; transform: scale(0.86) translateY(-8px); filter: blur(6px); } }
+@keyframes sheetIn { from { opacity: 0; transform: translateX(48px) scale(0.97); filter: blur(4px); } }
+@keyframes sheetUp { from { opacity: 0; transform: translateY(60px) scale(0.98); } }
+@keyframes dialogIn { from { opacity: 0; transform: translate(-50%, -46%) scale(0.9); filter: blur(6px); } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px) scale(0.985); filter: blur(3px); } }
+@keyframes settle { 0% { transform: scale(0.965); } 100% { transform: scale(1); } }
+@keyframes outScale { to { opacity: 0; transform: scale(0.94); filter: blur(4px); } }
+@keyframes outDialog { to { opacity: 0; transform: translate(-50%, -50%) scale(0.94); filter: blur(4px); } }
+@keyframes outFade { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+
+.stage { position: relative; z-index: 1; height: 100%; display: grid; place-items: center; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.chip {
+  position: absolute; z-index: 0; font-family: var(--font-timer); font-weight: 300; font-size: clamp(54px, 11vw, 120px); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  padding: 0.18em 0.42em; --radius: 0.5em; color: var(--fg-2); opacity: 0.9; animation: bob 9s ease-in-out infinite alternate;
+}
+.chip.c1 { left: max(4vw, 12px); top: 12vh; transform: rotate(-6deg); }
+.chip.c2 { right: max(4vw, 12px); bottom: 10vh; transform: rotate(5deg); font-size: clamp(40px, 8vw, 84px); animation-delay: -4s; }
+@keyframes bob { to { translate: 0 -14px; } }
+@media (max-width: 720px) { .chip { display: none; } }
+.card { position: relative; z-index: 1; width: min(440px, 100%); padding: 34px 30px 26px; --glass-alpha: 0.5; display: grid; gap: 22px; text-align: center; animation: rise 0.9s var(--spring-soft) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(26px) scale(0.96); filter: blur(8px); } }
+.mark { width: 72px; height: 72px; margin: 0 auto; filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--accent) 45%, transparent)); animation: float 6s ease-in-out infinite alternate; }
+@keyframes float { to { transform: translateY(-5px) rotate(2deg); } }
+h1 { margin: 0; font-family: var(--font-timer); font-weight: 300; font-size: 40px; letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance; }
+.lede { margin: -8px 0 0; color: var(--fg-2); line-height: 1.55; text-wrap: balance; }
+.who { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; padding: 12px 14px; border-radius: 20px; --radius: 20px; --glass-alpha: 0.35; min-height: 66px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--accent-ink); background: var(--accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), 0 6px 16px -6px var(--accent); }
+.who b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who small { color: var(--fg-3); font-size: 12.5px; line-height: 1.4; display: block; }
+.actions { display: grid; gap: 10px; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 999px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer;
+  transition: transform 0.55s var(--spring), filter 0.2s;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: scale(0.96); transition-duration: 0.12s; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -8px 16px -8px rgb(0 0 0 / 0.18), 0 10px 26px -10px var(--accent); }
+.btn.ghost { background: rgb(var(--glass-rgb) / 0.5); box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 rgb(255 255 255 / calc(var(--spec) * 0.5)); }
+.fine { color: var(--fg-3); font-size: 12.5px; line-height: 1.55; margin: 0; text-wrap: balance; }
+.perks { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; color: var(--fg-2); font-size: 12.5px; font-weight: 500; }
+.perks span::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
+@media (max-width: 480px) { .card { padding: 28px 20px 22px; } h1 { font-size: 34px; } }
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<main class="stage">
+  <div class="chip glass c1" aria-hidden="true">9.87</div>
+  <div class="chip glass c2" aria-hidden="true">Ao5 10.42</div>
+  <section class="card glass" aria-labelledby="t">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 3 28 10v12L16 29 4 22V10z" fill="var(--accent)" opacity=".22"/>
+      <path d="M16 3 28 10 16 17 4 10z" fill="var(--accent)" opacity=".95"/>
+      <path d="M4 10l12 7v12L4 22z" fill="var(--accent)" opacity=".55"/>
+      <path d="M28 10 16 17v12l12-7z" fill="var(--accent)" opacity=".75"/>
+      <path d="M16 3 28 10v12L16 29 4 22V10zM4 10l12 7 12-7M16 17v12" fill="none" stroke="var(--fg)" stroke-opacity=".35" stroke-width="1.2" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1 id="t">Welcome to Facet</h1>
+    </div>
+    <p class="lede">A speedcubing timer with WCA scrambles and inspection, built to feel like glass.</p>
+    <div class="who glass" id="who" aria-live="polite">
+      <div class="avatar" id="avatar" aria-hidden="true">F</div>
+      <div><b id="whoName">Checking your account…</b><small id="whoSub">One moment.</small></div>
+    </div>
+    <div class="actions">
+      <a class="btn primary" id="goAccount" href="index.html">Continue with Claude account</a>
+      <a class="btn ghost" id="goGuest" href="index.html">Continue as guest</a>
+    </div>
+    <div class="perks"><span>WCA scrambles</span><span>15 s inspection</span><span>Syncs across devices</span></div>
+    <p class="fine">Facet doesn't ask for a password. Your account comes from Claude, and only you can see your solves. Guest mode keeps everything in this browser.</p>
+  </section>
+</main>
+<script>
+(function () {
+  var KEY = 'facet:entry';
+  function setEntry(v) { try { localStorage.setItem(KEY, v); } catch (e) { /* storage unavailable */ } }
+  var acc = document.getElementById('goAccount'), guest = document.getElementById('goGuest');
+  acc.addEventListener('click', function () { setEntry('account'); });
+  guest.addEventListener('click', function () { setEntry('guest'); });
+  var prior = null; try { prior = localStorage.getItem(KEY); } catch (e) { /* ignore */ }
+  var nameEl = document.getElementById('whoName'), subEl = document.getElementById('whoSub'), av = document.getElementById('avatar');
+  function guestOnly() {
+    nameEl.textContent = 'Not signed in here';
+    subEl.textContent = 'Open Facet while signed in to Claude to sync, or continue as a guest.';
+    av.textContent = '?';
+    acc.textContent = 'Continue and sync if available';
+  }
+  if (!window.claude || typeof window.claude.use !== 'function') { guestOnly(); return; }
+  window.claude.use('user').then(function (user) {
+    if (!user) { guestOnly(); return null; }
+    return Promise.all([user.id(), user.me ? user.me() : null]).then(function (r) {
+      var id = r[0], me = r[1];
+      if (!id) { guestOnly(); return; }
+      var name = (me && me.name) || '';
+      nameEl.textContent = name || 'Signed in to Claude';
+      subEl.textContent = 'Your solves and settings sync to this account.';
+      av.textContent = (name || 'C').trim().charAt(0).toUpperCase();
+      acc.textContent = name ? 'Continue as ' + name.split(' ')[0] : 'Continue with Claude account';
+    });
+  }).catch(guestOnly);
+})();
+</script>
+</body>
+</html>
