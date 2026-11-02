@@ -36,3 +36,8 @@ Then visit http://localhost:8000. The first visit shows `login.html`; choose gue
 ## Note on sign-in
 
 Facet has no accounts of its own. On claude.ai it uses the Claude account for sync; here, only guest mode applies.
+
+## License
+
+All Rights Reserved (ARR). Copyright (c) 2026 Pavan Nemani.
+This project is not open source; see [LICENSE](LICENSE) for what you may and may not do.
