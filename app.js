@@ -65,7 +65,7 @@
   const QUICK_OPTS = [['best', 'Best'], ['mo3', 'Mo3'], ['ao5', 'Ao5'], ['ao12', 'Ao12'], ['ao50', 'Ao50'], ['ao100', 'Ao100'], ['mean', 'Mean'], ['sd', 'σ'], ['count', 'Solves']];
 
   const DEFAULTS = () => ({
-    theme: 'system', accent: '#14b896', bg: 'aurora', glass: 0.42, blur: 22, radius: 22, sheen: true, refract: false,
+    theme: 'system', accent: '#14b896', bg: 'aurora', glass: 0.42, blur: 22, radius: 22, sheen: true, refract: true,
     fontTimer: 'Outfit', fontUi: 'Onest', timerWeight: 300, timerScale: 1, scrScale: 1,
     input: 'timer', inspection: true, alerts: 'voice', holdMs: 300, update: 'live', precision: 2, focus: true, mouseStart: false,
     quick: ['ao5', 'ao12', 'mean', 'count'], subX: 0, chartWindow: 100,
@@ -1166,7 +1166,7 @@
         ${row('Frost', 'How much the background blurs behind panels.', range('blur', 0, 48, 1, RANGE_FMT.blur))}
         ${row('Corner radius', '', range('radius', 4, 34, 1, RANGE_FMT.radius))}
         ${row('Light sheen', 'A soft highlight that follows your pointer across each panel.', sw('sheen'))}
-        ${row('Lens refraction', 'Bends the background behind panels like thick glass. Chrome and Edge only; can be heavy on slow devices.', sw('refract'))}
+        ${row('Lens refraction', 'Bends the background at panel edges like thick glass, with a slight colour fringe. Chrome and Edge only; can be heavy on slow devices.', sw('refract'))}
       </div>
       <div class="set-group"><h3>Timer type</h3>
         <div class="fontpick">${Object.keys(FONTS).map((f) => { ensureFont(f); return `<button data-font="${f}" aria-pressed="${S().fontTimer === f}"><span class="sample" style="font-family:'${f}';font-weight:${S().timerWeight}">9.87</span><span class="name">${f}</span></button>`; }).join('')}</div>

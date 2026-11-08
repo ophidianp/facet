@@ -106,6 +106,13 @@ body.refract .glass {
   -webkit-backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
   backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
 }
+/* Argon lens (liquid-glass.js): rim refraction with a red/blue fringe, Chromium only */
+.lg-refract .glass[style*="--lg-filter"] {
+  -webkit-backdrop-filter: blur(10px) saturate(190%) var(--lg-filter) brightness(1.04);
+  backdrop-filter: blur(10px) saturate(190%) var(--lg-filter) brightness(1.04);
+}
+/* anything moving behind or as lens glass is redrawn every frame, so the field and chips hold still */
+.lg-refract .field .blob, .lg-refract .chip { animation-play-state: paused; }
 
 /* pressable glass: squish on press, spring back */
 .pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
@@ -214,6 +221,16 @@ h1 { margin: 0; font-family: var(--font-timer); font-weight: 300; font-size: 40p
     <p class="fine">Facet doesn't ask for a password. Your account comes from Claude, and only you can see your solves. Guest mode keeps everything in this browser.</p>
   </section>
 </main>
+<script src="liquid-glass.js"></script>
+<script>
+  /* Argon lens on the sign-in card: it bends the floating timer chips behind it */
+  if (window.LiquidGlass && LiquidGlass.chromium) {
+    LiquidGlass.init({ max: 6 });
+    LiquidGlass.glassify(document.querySelector('.card'), 77);
+    LiquidGlass.glassify(document.querySelector('.who'), 44);
+    document.querySelectorAll('.chip.glass').forEach(function (c) { LiquidGlass.glassify(c, 60); });
+  }
+</script>
 <footer style="position:fixed;left:0;right:0;bottom:12px;text-align:center;font-size:12px;opacity:.6;pointer-events:none">&copy; Pavan Nemani &middot; All Rights Reserved (ARR)</footer>
 <script>
 (function () {

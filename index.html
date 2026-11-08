@@ -195,6 +195,15 @@ body.refract .glass {
   -webkit-backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
   backdrop-filter: url(#lgRefract) blur(var(--blur-local, var(--blur))) saturate(190%) brightness(1.04);
 }
+/* Argon lens (liquid-glass.js): each panel gets its own rim refraction with a red/blue fringe,
+   replacing the generic wobble above. Chromium only; panels over the cap keep the wobble. */
+body.refract .glass[style*="--lg-filter"] {
+  --lg-blur: min(var(--blur-local, var(--blur)), 10px);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(190%) var(--lg-filter) brightness(1.04);
+  backdrop-filter: blur(var(--lg-blur)) saturate(190%) var(--lg-filter) brightness(1.04);
+}
+/* anything moving behind lens glass is redrawn every frame, so the colour field holds still */
+.lg-refract body.refract .field .blob { animation-play-state: paused; }
 
 /* pressable glass: squish on press, spring back */
 .pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
@@ -641,4 +650,24 @@ textarea.textin { height: auto; min-height: 88px; padding: 10px 12px; resize: ve
 <script src="puzzles.js"></script>
 <script src="scramble.js"></script>
 <script src="app.js"></script>
+<script src="liquid-glass.js"></script>
+<script>
+  /* Argon lens: when "Lens refraction" is on, the lasting panels (top bar, scramble bar, widgets)
+     get the Argon app's per-panel lens. Menus and sheets keep the light wobble (they come and go). */
+  (function () {
+    var LG = window.LiquidGlass;
+    if (!LG || !LG.chromium) return;
+    LG.init({ max: 14, strength: 60 });
+    var SEL = '.topbar .glass, #scrambleBar, #resultActions, .zen-exit, .widget.glass';
+    var queued = false;
+    function scan() {
+      queued = false;
+      if (!document.body.classList.contains('refract')) return;
+      document.querySelectorAll(SEL).forEach(function (el) { LG.glassify(el, el.id === 'scrambleBar' || el.classList.contains('widget') ? 50 : 70); });
+    }
+    new MutationObserver(function () { if (!queued) { queued = true; requestAnimationFrame(scan); } })
+      .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    scan();
+  })();
+</script>
 </body></html>
