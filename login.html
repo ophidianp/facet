@@ -11,7 +11,7 @@
 /* Layout: one plain centred card on a flat background. This page has no header,
    so there is no liquid glass on it. */
 :root {
-  --bg: #e6ecf2; --fg: #0e1621; --fg-2: #46566a; --fg-3: #7d8da0; --line: rgb(14 22 33 / 0.1);
+  --bg: color-mix(in srgb, var(--accent) 7%, #e6ecf2); --fg: #0e1621; --fg-2: #46566a; --fg-3: #7d8da0; --line: rgb(14 22 33 / 0.1);
   --glass-rgb: 255 255 255; --edge-rgb: 255 255 255; --edge-alpha: 0.7; --shade-rgb: 24 36 60;
   --hilite: rgb(255 255 255 / 0.75);
   --acc-h: 168; --acc-s: 80%;
@@ -31,14 +31,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #090d14; --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
+    --bg: color-mix(in srgb, var(--accent) 6%, #090d14); --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
     --glass-rgb: 22 28 40; --edge-alpha: 0.13; --shade-rgb: 0 0 0; --hilite: rgb(255 255 255 / 0.16);
     --field-a: hsl(var(--acc-h) var(--acc-s) 24%); --field-b: hsl(calc(var(--acc-h) + 55) var(--acc-s) 24%); --field-c: hsl(calc(var(--acc-h) - 150) var(--acc-s) 22%);
     --accent-ink: #04130f; --spec: 0.42; --rim: 0.32; --tint: 0.03; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #090d14; --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
+  --bg: color-mix(in srgb, var(--accent) 6%, #090d14); --fg: #eef3f9; --fg-2: #a3b1c2; --fg-3: #687a8f; --line: rgb(255 255 255 / 0.08);
   --glass-rgb: 22 28 40; --edge-alpha: 0.13; --shade-rgb: 0 0 0; --hilite: rgb(255 255 255 / 0.16);
   --field-a: hsl(var(--acc-h) var(--acc-s) 24%); --field-b: hsl(calc(var(--acc-h) + 55) var(--acc-s) 24%); --field-c: hsl(calc(var(--acc-h) - 150) var(--acc-s) 22%);
   --accent-ink: #04130f; --spec: 0.42; --rim: 0.32; --tint: 0.03; color-scheme: dark;

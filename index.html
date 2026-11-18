@@ -8,7 +8,7 @@
    widgets dock below (desktop: 3, phone: 1) or stack beside (tablet landscape: 2).
    Surfaces are frosted glass over a slowly drifting colour field. */
 :root {
-  --bg: #e6ecf2;
+  --bg: color-mix(in srgb, var(--accent) 7%, #e6ecf2);
   --fg: #0e1621;
   --fg-2: #46566a;
   --fg-3: #7d8da0;
@@ -62,7 +62,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #090d14;
+    --bg: color-mix(in srgb, var(--accent) 6%, #090d14);
     --fg: #eef3f9;
     --fg-2: #a3b1c2;
     --fg-3: #687a8f;
@@ -88,7 +88,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #090d14;
+  --bg: color-mix(in srgb, var(--accent) 6%, #090d14);
   --fg: #eef3f9;
   --fg-2: #a3b1c2;
   --fg-3: #687a8f;
