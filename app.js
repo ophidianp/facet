@@ -1230,6 +1230,9 @@
       <div class="set-group"><h3>Clean up</h3>
         ${row(`Clear “${esc(cur().name)}”`, `Removes all ${cur().solves.length} solves in this session but keeps the session.`, '<button class="btn danger" id="doClear">Clear</button>')}
         ${row('Reset appearance', 'Restores the default look and timer options. Solves are kept.', '<button class="btn" id="doReset">Reset</button>')}
+      </div>
+      <div class="set-group"><h3>About</h3>
+        <p class="note" style="margin:0">Facet is made by Pavan Nemani. <a href="https://ophidianp.github.io/" target="_blank" rel="noopener">See my other projects on my portfolio ↗</a></p>
       </div>`,
     rules: () => `
       <div class="set-group"><h3>Timing</h3><ul class="rules">
