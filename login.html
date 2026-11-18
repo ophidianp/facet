@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Outfit:wght@200;300;400&display=swap">
 <style>
-/* Layout: one centred solid card over the same colour field as the timer, with two
-   still timer chips behind it for depth. This page has no header, so no liquid glass. */
+/* Layout: one plain centred card on a flat background. This page has no header,
+   so there is no liquid glass on it. */
 :root {
   --bg: #e6ecf2; --fg: #0e1621; --fg-2: #46566a; --fg-3: #7d8da0; --line: rgb(14 22 33 / 0.1);
   --glass-rgb: 255 255 255; --edge-rgb: 255 255 255; --edge-alpha: 0.7; --shade-rgb: 24 36 60;
@@ -19,7 +19,7 @@
   --accent: #14b896; --accent-ink: #ffffff; --accent-soft: rgb(20 184 150 / 0.16);
   --font-ui: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-timer: "Outfit", "Segoe UI", system-ui, sans-serif;
-  --glass-alpha: 0.42; --blur: 22px; --radius: 28px;
+  --glass-alpha: 0.42; --blur: 22px; --radius: 16px;
   --spec: 0.9; --rim: 0.7; --tint: 0.06;
   --spring: cubic-bezier(0.34, 1.32, 0.5, 1); --spring-soft: cubic-bezier(0.32, 1.12, 0.5, 1); --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -48,11 +48,6 @@ html, body { height: 100%; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; -webkit-font-smoothing: antialiased; overflow: hidden; }
 a, button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.field { position: fixed; inset: 0; overflow: hidden; background: var(--bg); }
-.blob { position: absolute; width: 62vmax; height: 62vmax; border-radius: 50%; filter: blur(70px); opacity: 0.85; }
-.b1 { background: radial-gradient(circle, var(--field-a), transparent 66%); left: -18vmax; top: -22vmax; }
-.b2 { background: radial-gradient(circle, var(--field-b), transparent 66%); right: -20vmax; top: 6vmax; }
-.b3 { background: radial-gradient(circle, var(--field-c), transparent 66%); left: 14vmax; bottom: -30vmax; }
 /* ---------- glass ----------
    Liquid-glass recipe: a light tint over a saturated blur, a hairline
    edge, a bright specular rim on the lit side (::after, masked to the
@@ -167,13 +162,6 @@ body.refract .glass {
 
 
 .stage { position: relative; z-index: 1; height: 100%; display: grid; place-items: center; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.chip {
-  position: absolute; z-index: 0; font-family: var(--font-timer); font-weight: 300; font-size: clamp(54px, 11vw, 120px); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
-  padding: 0.18em 0.42em; --radius: 0.5em; color: var(--fg-2); opacity: 0.55;
-}
-.chip.c1 { left: max(4vw, 12px); top: 12vh; transform: rotate(-6deg); }
-.chip.c2 { right: max(4vw, 12px); bottom: 10vh; transform: rotate(5deg); font-size: clamp(40px, 8vw, 84px); }
-@media (max-width: 720px) { .chip { display: none; } }
 .card { position: relative; z-index: 1; width: min(460px, 100%); padding: 44px 40px 36px; display: grid; gap: 26px; text-align: center; animation: rise 0.6s var(--ease-out) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 .mark { width: 72px; height: 72px; margin: 0 auto; filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--accent) 45%, transparent)); }
@@ -199,10 +187,7 @@ h1 { margin: 0; font-family: var(--font-timer); font-weight: 300; font-size: 40p
 </style>
 </head>
 <body>
-<div class="field" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 <main class="stage">
-  <div class="chip glass c1" aria-hidden="true">9.87</div>
-  <div class="chip glass c2" aria-hidden="true">Ao5 10.42</div>
   <section class="card glass" aria-labelledby="t">
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
       <path d="M16 3 28 10v12L16 29 4 22V10z" fill="var(--accent)" opacity=".22"/>
