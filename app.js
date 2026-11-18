@@ -65,7 +65,7 @@
   const QUICK_OPTS = [['best', 'Best'], ['mo3', 'Mo3'], ['ao5', 'Ao5'], ['ao12', 'Ao12'], ['ao50', 'Ao50'], ['ao100', 'Ao100'], ['mean', 'Mean'], ['sd', 'σ'], ['count', 'Solves']];
 
   const DEFAULTS = () => ({
-    theme: 'system', accent: '#14b896', bg: 'aurora', glass: 0.42, blur: 22, radius: 22, sheen: true, refract: true,
+    theme: 'system', accent: '#14b896', bg: 'still', glass: 0.42, blur: 22, radius: 22, sheen: true, refract: true,
     fontTimer: 'Outfit', fontUi: 'Onest', timerWeight: 300, timerScale: 1, scrScale: 1,
     input: 'timer', inspection: true, alerts: 'voice', holdMs: 300, update: 'live', precision: 2, focus: true, mouseStart: false,
     quick: ['ao5', 'ao12', 'mean', 'count'], subX: 0, chartWindow: 100,

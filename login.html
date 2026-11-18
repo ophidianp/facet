@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Outfit:wght@200;300;400&display=swap">
 <style>
-/* Layout: one centred glass card over the same drifting colour field as the timer,
-   with a floating glass timer chip behind it for depth. */
+/* Layout: one centred solid card over the same colour field as the timer, with two
+   still timer chips behind it for depth. This page has no header, so no liquid glass. */
 :root {
   --bg: #e6ecf2; --fg: #0e1621; --fg-2: #46566a; --fg-3: #7d8da0; --line: rgb(14 22 33 / 0.1);
   --glass-rgb: 255 255 255; --edge-rgb: 255 255 255; --edge-alpha: 0.7; --shade-rgb: 24 36 60;
@@ -50,12 +50,9 @@ a, button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .field { position: fixed; inset: 0; overflow: hidden; background: var(--bg); }
 .blob { position: absolute; width: 62vmax; height: 62vmax; border-radius: 50%; filter: blur(70px); opacity: 0.85; }
-.b1 { background: radial-gradient(circle, var(--field-a), transparent 66%); left: -18vmax; top: -22vmax; animation: d1 38s ease-in-out infinite alternate; }
-.b2 { background: radial-gradient(circle, var(--field-b), transparent 66%); right: -20vmax; top: 6vmax; animation: d2 46s ease-in-out infinite alternate; }
-.b3 { background: radial-gradient(circle, var(--field-c), transparent 66%); left: 14vmax; bottom: -30vmax; animation: d3 52s ease-in-out infinite alternate; }
-@keyframes d1 { to { transform: translate(14vmax, 10vmax) scale(1.12); } }
-@keyframes d2 { to { transform: translate(-12vmax, 14vmax) scale(0.92); } }
-@keyframes d3 { to { transform: translate(10vmax, -12vmax) scale(1.08); } }
+.b1 { background: radial-gradient(circle, var(--field-a), transparent 66%); left: -18vmax; top: -22vmax; }
+.b2 { background: radial-gradient(circle, var(--field-b), transparent 66%); right: -20vmax; top: 6vmax; }
+.b3 { background: radial-gradient(circle, var(--field-c), transparent 66%); left: 14vmax; bottom: -30vmax; }
 /* ---------- glass ----------
    Liquid-glass recipe: a light tint over a saturated blur, a hairline
    edge, a bright specular rim on the lit side (::after, masked to the
@@ -111,8 +108,19 @@ body.refract .glass {
   -webkit-backdrop-filter: blur(10px) saturate(190%) var(--lg-filter) brightness(1.04);
   backdrop-filter: blur(10px) saturate(190%) var(--lg-filter) brightness(1.04);
 }
-/* anything moving behind or as lens glass is redrawn every frame, so the field and chips hold still */
-.lg-refract .field .blob, .lg-refract .chip { animation-play-state: paused; }
+
+/* Solid surfaces: no backdrop blur, rim or sheen on this page */
+:root { --panel: #fbfcfd; --panel-edge: rgb(14 22 33 / 0.08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --panel: #121823; --panel-edge: rgb(255 255 255 / 0.07); } }
+:root[data-theme="dark"] { --panel: #121823; --panel-edge: rgb(255 255 255 / 0.07); }
+.glass {
+  background: var(--panel);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 0 0 1px var(--panel-edge), 0 1px 2px rgb(var(--shade-rgb) / 0.04), 0 24px 60px -30px rgb(var(--shade-rgb) / 0.35);
+}
+.glass::before, .glass::after { display: none; }
+.who.glass { background: rgb(var(--shade-rgb) / 0.04); box-shadow: inset 0 0 0 1px var(--panel-edge); }
 
 /* pressable glass: squish on press, spring back */
 .pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
@@ -161,35 +169,33 @@ body.refract .glass {
 .stage { position: relative; z-index: 1; height: 100%; display: grid; place-items: center; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .chip {
   position: absolute; z-index: 0; font-family: var(--font-timer); font-weight: 300; font-size: clamp(54px, 11vw, 120px); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
-  padding: 0.18em 0.42em; --radius: 0.5em; color: var(--fg-2); opacity: 0.9; animation: bob 9s ease-in-out infinite alternate;
+  padding: 0.18em 0.42em; --radius: 0.5em; color: var(--fg-2); opacity: 0.55;
 }
 .chip.c1 { left: max(4vw, 12px); top: 12vh; transform: rotate(-6deg); }
-.chip.c2 { right: max(4vw, 12px); bottom: 10vh; transform: rotate(5deg); font-size: clamp(40px, 8vw, 84px); animation-delay: -4s; }
-@keyframes bob { to { translate: 0 -14px; } }
+.chip.c2 { right: max(4vw, 12px); bottom: 10vh; transform: rotate(5deg); font-size: clamp(40px, 8vw, 84px); }
 @media (max-width: 720px) { .chip { display: none; } }
-.card { position: relative; z-index: 1; width: min(440px, 100%); padding: 34px 30px 26px; --glass-alpha: 0.5; display: grid; gap: 22px; text-align: center; animation: rise 0.9s var(--spring-soft) both; }
-@keyframes rise { from { opacity: 0; transform: translateY(26px) scale(0.96); filter: blur(8px); } }
-.mark { width: 72px; height: 72px; margin: 0 auto; filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--accent) 45%, transparent)); animation: float 6s ease-in-out infinite alternate; }
-@keyframes float { to { transform: translateY(-5px) rotate(2deg); } }
+.card { position: relative; z-index: 1; width: min(460px, 100%); padding: 44px 40px 36px; display: grid; gap: 26px; text-align: center; animation: rise 0.6s var(--ease-out) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+.mark { width: 72px; height: 72px; margin: 0 auto; filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--accent) 45%, transparent)); }
 h1 { margin: 0; font-family: var(--font-timer); font-weight: 300; font-size: 40px; letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance; }
 .lede { margin: -8px 0 0; color: var(--fg-2); line-height: 1.55; text-wrap: balance; }
 .who { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; padding: 12px 14px; border-radius: 20px; --radius: 20px; --glass-alpha: 0.35; min-height: 66px; }
 .avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--accent-ink); background: var(--accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), 0 6px 16px -6px var(--accent); }
 .who b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .who small { color: var(--fg-3); font-size: 12.5px; line-height: 1.4; display: block; }
-.actions { display: grid; gap: 10px; }
+.actions { display: grid; gap: 12px; }
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 999px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer;
   transition: transform 0.55s var(--spring), filter 0.2s;
 }
 .btn:hover { filter: brightness(1.05); }
 .btn:active { transform: scale(0.96); transition-duration: 0.12s; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -8px 16px -8px rgb(0 0 0 / 0.18), 0 10px 26px -10px var(--accent); }
-.btn.ghost { background: rgb(var(--glass-rgb) / 0.5); box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 rgb(255 255 255 / calc(var(--spec) * 0.5)); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
 .fine { color: var(--fg-3); font-size: 12.5px; line-height: 1.55; margin: 0; text-wrap: balance; }
 .perks { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; color: var(--fg-2); font-size: 12.5px; font-weight: 500; }
 .perks span::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
-@media (max-width: 480px) { .card { padding: 28px 20px 22px; } h1 { font-size: 34px; } }
+@media (max-width: 480px) { .card { padding: 32px 24px 28px; } h1 { font-size: 34px; } }
 </style>
 </head>
 <body>
@@ -221,16 +227,6 @@ h1 { margin: 0; font-family: var(--font-timer); font-weight: 300; font-size: 40p
     <p class="fine">Facet doesn't ask for a password. Your account comes from Claude, and only you can see your solves. Guest mode keeps everything in this browser.</p>
   </section>
 </main>
-<script src="liquid-glass.js"></script>
-<script>
-  /* Argon lens on the sign-in card: it bends the floating timer chips behind it */
-  if (window.LiquidGlass && LiquidGlass.chromium) {
-    LiquidGlass.init({ max: 6 });
-    LiquidGlass.glassify(document.querySelector('.card'), 77);
-    LiquidGlass.glassify(document.querySelector('.who'), 44);
-    document.querySelectorAll('.chip.glass').forEach(function (c) { LiquidGlass.glassify(c, 60); });
-  }
-</script>
 <footer style="position:fixed;left:0;right:0;bottom:12px;text-align:center;font-size:12px;opacity:.6;pointer-events:none">&copy; Pavan Nemani &middot; All Rights Reserved (ARR)</footer>
 <script>
 (function () {

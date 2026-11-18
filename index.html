@@ -46,7 +46,7 @@
   --glass-alpha: 0.42;
   --blur: 22px;
   --radius: 22px;
-  --gap: 14px;
+  --gap: 18px;
   --spec: 0.9;
   --rim: 0.7;
   --tint: 0.06;
@@ -205,6 +205,20 @@ body.refract .glass[style*="--lg-filter"] {
 /* anything moving behind lens glass is redrawn every frame, so the colour field holds still */
 .lg-refract body.refract .field .blob { animation-play-state: paused; }
 
+/* Liquid glass lives on the top bar only. Every other panel (scramble bar, widgets, result
+   actions, menus, sheets, dialogs, toast) is a plain solid surface: no backdrop blur, rim,
+   sheen or lens, so the browser has far less to redraw. */
+:root { --panel: #fbfcfd; --panel-edge: rgb(14 22 33 / 0.08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --panel: #121823; --panel-edge: rgb(255 255 255 / 0.07); } }
+:root[data-theme="dark"] { --panel: #121823; --panel-edge: rgb(255 255 255 / 0.07); }
+.glass:not(.topbar .glass) {
+  background: var(--panel);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 0 0 1px var(--panel-edge), 0 1px 2px rgb(var(--shade-rgb) / 0.04), 0 14px 34px -20px rgb(var(--shade-rgb) / 0.28);
+}
+.glass:not(.topbar .glass)::before, .glass:not(.topbar .glass)::after { display: none; }
+
 /* pressable glass: squish on press, spring back */
 .pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
   transition: transform 0.55s var(--spring), background-color 0.25s var(--ease-out), color 0.25s var(--ease-out), box-shadow 0.3s var(--ease-out), filter 0.2s;
@@ -254,9 +268,9 @@ body.refract .glass[style*="--lg-filter"] {
   height: 100%;
   display: grid;
   gap: var(--gap);
-  padding-block: 14px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 22px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
 }
 .app[data-layout="desktop"] {
   grid-template-columns: minmax(0, 1fr);
@@ -273,6 +287,8 @@ body.refract .glass[style*="--lg-filter"] {
   grid-template-rows: auto auto minmax(0, 1fr) minmax(170px, 36%);
   grid-template-areas: "top" "scr" "stage" "dock";
   gap: 10px; padding-block: 10px;
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
 }
 @media (orientation: landscape) and (max-height: 520px) {
   .app[data-layout="mobile"] { grid-template-rows: auto auto minmax(0, 1fr) minmax(120px, 34%); }
@@ -320,7 +336,7 @@ body.refract .glass[style*="--lg-filter"] {
 @keyframes pulse { 50% { opacity: 0.35; } }
 
 /* ---------- scramble ---------- */
-.scramble { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 10px 10px 16px; }
+.scramble { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 14px 14px 14px 20px; }
 .scr-meta { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
 .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-2); background: rgb(var(--glass-rgb) / 0.5); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
 .chip.rs { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
@@ -376,7 +392,7 @@ body.refract .glass[style*="--lg-filter"] {
 
 /* ---------- widgets ---------- */
 .widget { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
-.w-head { display: flex; align-items: center; gap: 8px; padding: 10px 10px 4px 14px; min-width: 0; }
+.w-head { display: flex; align-items: center; gap: 8px; padding: 14px 14px 6px 18px; min-width: 0; }
 .w-title { position: relative; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-2); }
 .w-title select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: 12px; color: var(--fg-2); padding: 4px 18px 4px 0; cursor: pointer; }
 .w-title svg { position: absolute; right: 0; width: 13px; height: 13px; pointer-events: none; }
@@ -384,7 +400,7 @@ body.refract .glass[style*="--lg-filter"] {
 .w-extra { margin-left: auto; display: flex; gap: 4px; align-items: center; color: var(--fg-3); font-size: 12px; }
 .w-extra button { border: 0; background: transparent; color: var(--fg-3); font-weight: 600; font-size: 12px; padding: 4px 8px; border-radius: 999px; }
 .w-extra button[aria-pressed="true"] { background: rgb(var(--glass-rgb) / 0.6); color: var(--fg); }
-.w-body { flex: 1; min-height: 0; padding: 4px 14px 12px; overflow: auto; position: relative; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--fg-3) 40%, transparent) transparent; }
+.w-body { flex: 1; min-height: 0; padding: 6px 18px 16px; overflow: auto; position: relative; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--fg-3) 40%, transparent) transparent; }
 .sheet-body, .pop, .scr-text { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--fg-3) 40%, transparent) transparent; }
 .w-body.center { display: grid; place-items: center; }
 .empty { color: var(--fg-3); text-align: center; font-size: 13px; line-height: 1.5; max-width: 30ch; margin: auto; display: grid; gap: 10px; justify-items: center; }
@@ -652,18 +668,18 @@ textarea.textin { height: auto; min-height: 88px; padding: 10px 12px; resize: ve
 <script src="app.js"></script>
 <script src="liquid-glass.js"></script>
 <script>
-  /* Argon lens: when "Lens refraction" is on, the lasting panels (top bar, scramble bar, widgets)
-     get the Argon app's per-panel lens. Menus and sheets keep the light wobble (they come and go). */
+  /* Argon lens: when "Lens refraction" is on, the top bar gets the Argon app's per-panel lens.
+     It is the only glass surface; everything else is solid. */
   (function () {
     var LG = window.LiquidGlass;
     if (!LG || !LG.chromium) return;
-    LG.init({ max: 14, strength: 60 });
-    var SEL = '.topbar .glass, #scrambleBar, #resultActions, .zen-exit, .widget.glass';
+    LG.init({ max: 4, strength: 60 });
+    var SEL = '.topbar .glass';
     var queued = false;
     function scan() {
       queued = false;
       if (!document.body.classList.contains('refract')) return;
-      document.querySelectorAll(SEL).forEach(function (el) { LG.glassify(el, el.id === 'scrambleBar' || el.classList.contains('widget') ? 50 : 70); });
+      document.querySelectorAll(SEL).forEach(function (el) { LG.glassify(el, 70); });
     }
     new MutationObserver(function () { if (!queued) { queued = true; requestAnimationFrame(scan); } })
       .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
