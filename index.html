@@ -215,9 +215,11 @@ body.refract .glass[style*="--lg-filter"] {
   background: var(--panel);
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  box-shadow: 0 0 0 1px var(--panel-edge), 0 1px 2px rgb(var(--shade-rgb) / 0.04), 0 14px 34px -20px rgb(var(--shade-rgb) / 0.28);
+  box-shadow: 0 0 0 1px var(--panel-edge);
 }
 .glass:not(.topbar .glass)::before, .glass:not(.topbar .glass)::after { display: none; }
+/* minimal: menus and dialogs float over the timer, so they keep one soft shadow */
+.pop.glass, .sheet.glass, .dialog.glass, .toast.glass { box-shadow: 0 0 0 1px var(--panel-edge), 0 20px 50px -24px rgb(var(--shade-rgb) / 0.35); }
 
 /* pressable glass: squish on press, spring back */
 .pill, .iconbtn, .btn, .seg, .swatch, .item, .fontpick button, .checks button, .segctl button, .tabs button, .switch, .w-extra button {
@@ -579,6 +581,11 @@ textarea.textin { height: auto; min-height: 88px; padding: 10px 12px; resize: ve
   .capsule > .iconbtn { width: 34px; height: 34px; }
   .capsule > .pill { height: 34px; }
 }
+/* minimal: flat chips and buttons (after their base rules so they win) */
+.chip { background: none; }
+.chip.rs { background: none; border-color: currentColor; }
+.btn:not(.primary) { background: transparent; }
+.btn:not(.primary):hover { background: rgb(var(--shade-rgb) / 0.05); }
 </style>
 
 <div class="field" id="field" aria-hidden="true">
